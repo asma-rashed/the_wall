@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand">Navbar</a>
+        <form class="d-flex">
+            <div>welcome {{user.first_name}}</div>
+            <a href="/logout" class="d-flex flex-row-reverse bd-highlight">log out</a> 
+        </form>
+    </div>
+</nav>
+<div class="container">
+    <form method="post" action="/msg">
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">post a message</label>
+            <textarea class="form-control" name="message" rows="3"></textarea>
+        </div>
+        <input type="submit" value="Post a message" class="btn btn-secondary">
+        {% csrf_token %}
+    </form>
+    <div>
+        {% for message in messages %}
+        <div>
+            <h3> {{user.first_name }}{{user.last_name }} - {{message.created_at}}</h3>
+            <h4>{{message.message}}</h4>
+        </div>
+            {% for comment in message.comments.all %}
+        <div> 
+            <h5>{{ comment.first_name }} {{ comment.user_id.last_name }} - {{ comment.created_at }}</h5>
+            <p>{{ comment.comment }}</p>
+        </div>
+            {% endfor %}                        
+        </div> 
+        <form method="post" action="/comment">
+            <div class="form-group">
+                {% csrf_token %}
+                <label for="exampleFormControlTextarea1">post a comment</label>
+                <input type="hidden" name="msg_id" value="{{ message.id }}">
+                <textarea class="form-control" name="comment" rows="3"></textarea>
+            </div>
+            <input type="submit" value="Post a comment" class="btn btn-secondary">
+        </form>
+        {% endfor %}
+</div>
+{% endblock %}
